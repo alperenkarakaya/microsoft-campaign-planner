@@ -37,7 +37,7 @@ def calculate_roi(campaign: Campaign) -> Campaign:
 
     return campaign
 
-@router.post("/", response_model=CampaignResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=CampaignResponse, status_code=status.HTTP_201_CREATED)
 async def create_campaign(
     campaign:  CampaignCreate,
     db: Session = Depends(get_db),
@@ -60,7 +60,7 @@ async def create_campaign(
     
     return db_campaign
 
-@router.get("/", response_model=List[CampaignResponse])
+@router.get("", response_model=List[CampaignResponse])
 async def list_campaigns(
     skip: int = 0,
     limit: int = 20,

@@ -45,8 +45,8 @@ def _gemini_generate(prompt: str) -> str:
     return response.text.strip()
 
 
-def _deterministic_answer(query: str, context: Dict[str, Any]) -> str:
-    lines = [f"(No GEMINI_API_KEY configured — showing raw grounded data for: \"{query}\")"]
+def _deterministic_answer(query: str, context: Dict[str, Any], reason: str = "No GEMINI_API_KEY configured") -> str:
+    lines = [f"({reason} — showing raw grounded data for: \"{query}\")"]
     campaigns = context.get("campaigns") or []
     creators = context.get("creators") or []
     if campaigns:
@@ -87,4 +87,9 @@ Answer in 2-5 sentences, plain text (no markdown, no JSON).
     except Exception as e:
         logger.warning("Assistant: Gemini failed, using deterministic fallback: %s: %s",
                         type(e).__name__, e)
-        return {"answer": _deterministic_answer(query, context), "source": "deterministic_fallback"}
+        reason = (
+            "Gemini quota exceeded"
+            if "ResourceExhausted" in type(e).__name__ or "429" in str(e)
+            else "Gemini request failed"
+        )
+        return {"answer": _deterministic_answer(query, context, reason=reason), "source": "deterministic_fallback"}

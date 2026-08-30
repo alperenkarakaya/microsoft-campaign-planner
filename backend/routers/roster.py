@@ -143,7 +143,11 @@ async def roster_intelligence(
         if not brand_profile:
             raise HTTPException(status_code=404, detail="Brand profile not found")
 
-    # Fetch all influencers
+    # Total count across the whole roster (independent of this page's slice) —
+    # used by the frontend for "Showing X of {total}" and Next-page enablement.
+    total_influencers = db.query(Influencer).count()
+
+    # Fetch this page of influencers
     influencers = db.query(Influencer).offset(skip).limit(limit).all()
 
     # Pre-fetch the LATEST analysis per influencer (not brand-specific — this is
@@ -281,7 +285,7 @@ async def roster_intelligence(
 
     return {
         "creators": creators,
-        "total": len(creators),
+        "total": total_influencers,
         "sort_order": "intrinsic_quality",
         "sort_description": (
             "Sorted by intrinsic audience trust (tier), then trust score, "

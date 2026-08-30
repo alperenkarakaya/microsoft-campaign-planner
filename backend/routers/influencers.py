@@ -11,7 +11,7 @@ from utils.ai_detector import detect_fake_followers
 
 router = APIRouter()
 
-@router.post("/", response_model=InfluencerResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=InfluencerResponse, status_code=status.HTTP_201_CREATED)
 async def create_influencer(
     influencer: InfluencerCreate,
     db: Session = Depends(get_db),
@@ -34,7 +34,7 @@ async def create_influencer(
     
     return db_influencer
 
-@router.get("/", response_model=List[InfluencerResponse])
+@router.get("", response_model=List[InfluencerResponse])
 async def list_influencers(
     skip: int = 0,
     limit: int = 20,
